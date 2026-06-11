@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阳雨童 — 传播学</title>
+    <style>
+        /* ===== Reset & Base ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --bg-alt: #121212;
+            --text: #ebebeb;
+            --text-dim: #8a8a8a;
+            --text-muted: #555;
+            --accent: #f5f5f5;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.18);
+            --font-sans: "PingFang SC", "Noto Sans SC", "Helvetica Neue", "SF Pro Display", system-ui, -apple-system, sans-serif;
+            --font-serif: "Noto Serif SC", "Songti SC", "Times New Roman", serif;
+            --transition: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+            --transition-slow: 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-sans);
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* ===== Noise overlay ===== */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E");
+        }
+
+        /* ===== Container ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 6vw;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 2rem 6vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            mix-blend-mode: difference;
+            pointer-events: none;
+        }
+        .header>* {
+            pointer-events: auto;
+        }
+        .header-time {
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            color: var(--text-dim);
+            font-family: var(--font-sans);
+        }
+        .header-sound {
+            font-size: 0.7rem;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: color var(--transition);
+        }
+        .header-sound:hover {
+            color: var(--text-dim);
+        }
+
+        /* ===== Hero Section ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20vh 0 10vh;
+        }
+        .hero-name {
+            font-size: clamp(3.5rem, 9vw, 8rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 0.95;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            font-family: var(--font-sans);
+        }
+        .hero-sub {
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            color: var(--text-dim);
+            font-weight: 400;
+            letter-spacing: 0.01em;
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 0.4rem;
+        }
+        .hero-sub strong {
+            color: var(--accent);
+            font-weight: 500;
+        }
+        .hero-line {
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+        }
+        .hero-available {
+            display: inline-block;
+            margin-top: 1.2rem;
+            font-size: 0.8rem;
+            letter-spacing: 0.06em;
+            color: #7eb87e;
+            position: relative;
+            padding-left: 1.2em;
+        }
+        .hero-available::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #7eb87e;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.35;
+            }
+        }
+        .scroll-hint {
+            position: absolute;
+            bottom: 3rem;
+            left: 6vw;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            animation: fade-scroll 2.5s ease-in-out infinite;
+        }
+        @keyframes fade-scroll {
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: translateY(0);
+            }
+            50% {
+                opacity: 0.9;
+                transform: translateY(8px);
+            }
+        }
+
+        /* ===== Divider ===== */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: var(--border);
+            margin: 0;
+        }
+
+        /* ===== Section: Portfolio Items ===== */
+        .portfolio-section {
+            padding: 5rem 0;
+        }
+        .portfolio-item {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            padding: 2.2rem 0;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+            text-decoration: none;
+            color: inherit;
+        }
+        .portfolio-item:hover {
+            padding-left: 2.5rem;
+            border-bottom-color: var(--border-hover);
+        }
+        .portfolio-item:hover .portfolio-number {
+            color: var(--text);
+        }
+        .portfolio-item:hover .portfolio-title {
+            color: var(--accent);
+        }
+        .portfolio-item:hover .portfolio-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .portfolio-number {
+            font-size: 0.85rem;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            font-weight: 500;
+            min-width: 4rem;
+            transition: color var(--transition);
+            flex-shrink: 0;
+        }
+        .portfolio-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .portfolio-title {
+            font-size: clamp(1.8rem, 3.5vw, 3rem);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            transition: color var(--transition);
+            line-height: 1.1;
+        }
+        .portfolio-desc {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            letter-spacing: 0.02em;
+            line-height: 1.5;
+            max-width: 520px;
+        }
+        .portfolio-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .portfolio-arrow {
+            font-size: 1.4rem;
+            color: var(--text-dim);
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all var(--transition);
+            flex-shrink: 0;
+            margin-left: 1rem;
+        }
+
+        /* ===== Detail Panel ===== */
+        .detail-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-slow);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .detail-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .detail-panel {
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            padding: 3rem 3.5rem;
+            max-width: 720px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(30px);
+            transition: transform var(--transition-slow);
+        }
+        .detail-overlay.active .detail-panel {
+            transform: translateY(0);
+        }
+        .detail-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: color var(--transition);
+            line-height: 1;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .detail-close:hover {
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .detail-number {
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+        .detail-title {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        .detail-body {
+            font-size: 0.95rem;
+            line-height: 1.9;
+            color: var(--text-dim);
+            letter-spacing: 0.02em;
+        }
+        .detail-body p {
+            margin-bottom: 1.2rem;
+        }
+        .detail-body blockquote {
+            border-left: 2px solid rgba(255, 255, 255, 0.15);
+            padding-left: 1.2rem;
+            margin: 1.5rem 0;
+            color: var(--text);
+            font-family: var(--font-serif);
+            font-style: italic;
+        }
+        .detail-body a {
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            text-decoration-thickness: 1px;
+            text-decoration-color: rgba(255, 255, 255, 0.2);
+            transition: text-decoration-color var(--transition);
+        }
+        .detail-body a:hover {
+            text-decoration-color: var(--accent);
+        }
+        .detail-tags {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .detail-tag {
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            padding: 0.4rem 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        /* ===== About Section ===== */
+        .about-section {
+            padding: 6rem 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            border-top: 1px solid var(--border);
+        }
+        .about-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .about-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text-dim);
+            letter-spacing: 0.02em;
+        }
+        .about-text strong {
+            color: var(--accent);
+            font-weight: 500;
+        }
+        .about-highlights {
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+        }
+        .highlight-item {
+            padding-bottom: 1.8rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .highlight-item:last-child {
+            border-bottom: none;
+        }
+        .highlight-num {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+        .highlight-text {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            letter-spacing: 0.02em;
+        }
+
+        /* ===== Contact Section ===== */
+        .contact-section {
+            padding: 5rem 0 4rem;
+            border-top: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+        .contact-heading {
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+        .contact-sub {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-top: 0.8rem;
+            letter-spacing: 0.02em;
+        }
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        .contact-link {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            transition: color var(--transition);
+            padding: 0.6rem 0;
+        }
+        .contact-link:hover {
+            color: var(--accent);
+        }
+        .contact-link-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+            transition: border-color var(--transition);
+        }
+        .contact-link:hover .contact-link-icon {
+            border-color: var(--border-hover);
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            padding: 2rem 0 3rem;
+            font-size: 0.7rem;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-note {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+        }
+
+        /* ===== Cursor follower (desktop) ===== */
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: width 0.25s, height 0.25s, border-color 0.25s;
+            mix-blend-mode: difference;
+            display: none;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .cursor-follower {
+                display: block;
+            }
+        }
+        .cursor-follower.hovering {
+            width: 70px;
+            height: 70px;
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 5vw;
+            }
+            .header {
+                padding: 1.5rem 5vw;
+            }
+            .hero-name {
+                font-size: clamp(2.8rem, 11vw, 4rem);
+            }
+            .portfolio-item {
+                padding: 1.6rem 0;
+                flex-wrap: wrap;
+            }
+            .portfolio-item:hover {
+                padding-left: 0;
+            }
+            .portfolio-number {
+                min-width: auto;
+                margin-right: 0.8rem;
+                font-size: 0.75rem;
+            }
+            .portfolio-title {
+                font-size: 1.5rem;
+            }
+            .portfolio-arrow {
+                display: none;
+            }
+            .about-section,
+            .contact-section {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .detail-panel {
+                padding: 2rem 1.5rem;
+                width: 95%;
+            }
+            .cursor-follower {
+                display: none !important;
+            }
+            .portfolio-info {
+                width: 100%;
+                margin-top: 0.3rem;
+            }
+            .portfolio-desc {
+                max-width: 100%;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-name {
+                font-size: 2.5rem;
+            }
+            .hero-sub {
+                font-size: 0.95rem;
+            }
+            .portfolio-title {
+                font-size: 1.25rem;
+            }
+            .contact-heading {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* ===== Scrollbar ===== */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ===== Animations ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-in {
+            animation: fadeInUp 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+        }
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+        .delay-4 {
+            animation-delay: 0.4s;
+        }
+        .delay-5 {
+            animation-delay: 0.5s;
+        }
+        .delay-6 {
+            animation-delay: 0.6s;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Noise texture overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Custom cursor (desktop) -->
+    <div class="cursor-follower" id="cursorFollower"></div>
+
+    <!-- Fixed header -->
+    <header class="header">
+        <span class="header-time" id="headerTime"></span>
+        <span class="header-sound" id="soundToggle" title="Toggle ambient mode">⚡ Sound off</span>
+    </header>
+
+    <!-- Scroll hint -->
+    <div class="scroll-hint" style="position:relative;bottom:auto;left:auto;padding:0 6vw;margin-top:-2rem;">Scroll ↓</div>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero container">
+        <h1 class="hero-name animate-in">阳雨童</h1>
+        <p class="hero-sub animate-in delay-1">
+            传播学 · <strong>中山大学</strong> · 本科2027届
+        </p>
+        <p class="hero-line animate-in delay-2">
+            写作者 · 内容创作者 · 视觉叙事者
+        </p>
+        <p class="hero-line animate-in delay-2" style="color:var(--text-muted);">
+            数据新闻 · 影像制作 · 社交媒体运营
+        </p>
+        <span class="hero-available animate-in delay-3">Available for collaboration</span>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ===== PORTFOLIO ITEMS ===== -->
+    <section class="portfolio-section container" id="works">
+
+        <!-- 01 新闻报道与公众号推文 -->
+        <div class="portfolio-item animate-in delay-1" data-detail="detail-news">
+            <span class="portfolio-number">01</span>
+            <div class="portfolio-info">
+                <span class="portfolio-title">新闻报道与公众号推文</span>
+                <span class="portfolio-desc">深度人物特写 · 期刊发表 · 学院公众号运营</span>
+                <span class="portfolio-meta">《岭南传媒探索》 / 深度报道</span>
+            </div>
+            <span class="portfolio-arrow">→</span>
+        </div>
+
+        <!-- 02 影像作品 -->
+        <div class="portfolio-item animate-in delay-2" data-detail="detail-visual">
+            <span class="portfolio-number">02</span>
+            <div class="portfolio-info">
+                <span class="portfolio-title">影像作品</span>
+                <span class="portfolio-desc">纪录片 · 摄影集 · AI短片 · 个人创作</span>
+                <span class="portfolio-meta">广东广播电视台 / 个人项目</span>
+            </div>
+            <span class="portfolio-arrow">→</span>
+        </div>
+
+        <!-- 03 社交媒体与营销 -->
+        <div class="portfolio-item animate-in delay-3" data-detail="detail-social">
+            <span class="portfolio-number">03</span>
+            <div class="portfolio-info">
+                <span class="portfolio-title">社交媒体与营销</span>
+                <span class="portfolio-desc">小红书独立运营 · 内容策划 · 增长实践</span>
+                <span class="portfolio-meta">2个月 / 1000+粉丝 / 5000+赞</span>
+            </div>
+            <span class="portfolio-arrow">→</span>
+        </div>
+
+        <!-- 04 数据新闻 -->
+        <div class="portfolio-item animate-in delay-4" data-detail="detail-data">
+            <span class="portfolio-number">04</span>
+            <div class="portfolio-info">
+                <span class="portfolio-title">数据新闻</span>
+                <span class="portfolio-desc">Python数据分析 · 可视化 · 数据新闻大赛</span>
+                <span class="portfolio-meta">广东省赛区优秀奖</span>
+            </div>
+            <span class="portfolio-arrow">→</span>
+        </div>
+
+        <!-- 05 文字作品 -->
+        <div class="portfolio-item animate-in delay-5" data-detail="detail-writing">
+            <span class="portfolio-number">05</span>
+            <div class="portfolio-info">
+                <span class="portfolio-title">文字作品</span>
+                <span class="portfolio-desc">非虚构写作 · 特稿 · 文学创作</span>
+                <span class="portfolio-meta">人物特写 / 叙事报道</span>
+            </div>
+            <span class="portfolio-arrow">→</span>
+        </div>
+
+    </section>
+
+    <!-- ===== ABOUT ===== -->
+    <section class="about-section container animate-in delay-6">
+        <div>
+            <p class="about-label">About</p>
+            <p class="about-text">
+                我是<strong>阳雨童</strong>，中山大学传播学2027届本科生。我对<strong>文字与影像</strong>充满热情，相信好的故事能够跨越媒介，直抵人心。从深度人物报道到数据可视化，从纪录片策划到社交媒体运营，我不断探索传播的边界，寻找最有力的叙事方式。
+            </p>
+        </div>
+        <div class="about-highlights">
+            <div class="highlight-item">
+                <div class="highlight-num"></div>
+                <div class="highlight-text">数据分析、量化研究、可视化</div>
+            </div>
+            <div class="highlight-item">
+                <div class="highlight-num">2 months</div>
+                <div class="highlight-text">独立运营、深度研究社交媒体</div>
+            </div>
+            <div class="highlight-item">
+                <div class="highlight-num">∞</div>
+                <div class="highlight-text">对故事、影像与数据叙事的无限探索</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CONTACT ===== -->
+    <section class="contact-section container" id="contact">
+        <div>
+            <p class="about-label">Contact</p>
+            <h2 class="contact-heading">让我们携手合作</h2>
+            <p class="contact-sub">期待与你交流，共同创作有意义的内容。</p>
+        </div>
+        <div class="contact-links">
+            <a href="mailto:yangyt77@mail2.sysu.edu.cn" class="contact-link">
+                <span class="contact-link-icon">@</span>
+                yangyt77@mail2.sysu.edu.cn
+            </a>
+            <a href="tel:17348083069" class="contact-link">
+                <span class="contact-link-icon">☎</span>
+                17348083069
+            </a>
+            <span class="contact-link">
+                <span class="contact-link-icon">💬</span>
+                微信: Yulili637
+            </span>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Footer -->
+    <footer class="footer container">
+        <span>© 2026 阳雨童</span>
+        <span class="footer-note">中山大学传播学2027届</span>
+    </footer>
+
+    <!-- ===== DETAIL OVERLAY ===== -->
+    <div class="detail-overlay" id="detailOverlay">
+        <div class="detail-panel" id="detailPanel">
+            <button class="detail-close" id="detailClose">✕</button>
+            <div id="detailContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // ===== Clock =====
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit',
+                second: '2-digit' });
+            document.getElementById('headerTime').textContent = timeStr + ' · 广州';
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // ===== Custom Cursor =====
+        const cursor = document.getElementById('cursorFollower');
+        let mouseX = 0,
+            mouseY = 0;
+        let cursorX = 0,
+            cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.12;
+            cursorY += (mouseY - cursorY) * 0.12;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            animateCursor();
+        }
+
+        // Hover effects on interactive elements
+        const interactiveElements = document.querySelectorAll(
+            '.portfolio-item, .contact-link, button, a, #soundToggle');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+        });
+
+        // ===== Sound Toggle =====
+        const soundToggle = document.getElementById('soundToggle');
+        let soundOn = false;
+        soundToggle.addEventListener('click', () => {
+            soundOn = !soundOn;
+            soundToggle.textContent = soundOn ? '⚡ Sound on' : '⚡ Sound off';
+        });
+
+        // ===== Detail Panel =====
+        const detailOverlay = document.getElementById('detailOverlay');
+        const detailContent = document.getElementById('detailContent');
+        const detailClose = document.getElementById('detailClose');
+
+        const detailData = {
+            'detail-news': {
+                number: '01',
+                title: '新闻报道与公众号推文',
+                body: `
+                    <p><strong>《足丈山野，手捻光阴》</strong>——这是一篇关于云南凤庆县83岁制香人杨寿英的深度人物特写。她自上世纪七十年代开始手工制作竹签香，至今已坚持<strong>四十七年</strong>。</p>
+                    <blockquote>杨寿英的香，是用足迹量出来的。为了找到香料，她需绕二十公里山路过桥、或是乘船跨过澜沧江，再深入三十公里外的莽莽大山。</blockquote>
+                    <p>这篇文章记录了她翻山越岭采集松树根、手工拍打制香的全过程，以及她坚守四十年不涨价（从五角到三元）的朴素信念。作品展现了传统手工艺人在现代化浪潮中的坚守与温度。</p>
+                    <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0;">
+                    <p><strong>其他成果：</strong></p>
+                    <p>· 省级期刊《岭南传媒探索》悦图·广角栏目学生助理</p>
+                    <p>· 学院公众号推文</p>
+                    <p>· 报道获省级奖项</p>
+                `,
+                tags: ['深度报道', '人物特写', '非虚构写作', '期刊发表', '公众号运营']
+            },
+            'detail-visual': {
+                number: '02',
+                title: '影像作品',
+                body: `
+                    <p><strong>广东广播电视台实习项目：</strong>参与华侨主题纪录片脚本撰写与成片制作。</p>
+                    <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0;">
+                    <p><strong>纪录片《明月》</strong>（策划 / 摄影 / 剪辑）：讲述一位六十岁女性在抖音平台直播唱歌的故事——「她有一个军人家庭，父母、丈夫却都早早离她而去。孑然一身的她在六十岁这年，学会在抖音平台直播唱歌。」</p>
+                    <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0;">
+                    <p><strong>个人摄影集《Ashes of Time》：</strong></p>
+                    <p>🔗 <a href="https://www.zcool.com.cn/work/ZNzI5ODM1NjA=.html" target="_blank" rel="noopener">查看摄影集</a></p>
+                    <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0;">
+                    <p><strong>个人短片《心中的雨》：</strong></p>
+                    <p>🔗 <a href="https://www.zcool.com.cn/work/ZNzI5ODQ2NzY=.html" target="_blank" rel="noopener">查看短片</a></p>
+                    <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0;">
+                    <p><strong>AI健康教育宣传视频《赛博江湖之减重风云录》：</strong></p>
+                    <p>🔗 <a href="https://www.zcool.com.cn/work/ZNzM3MzI1ODA=.html" target="_blank" rel="noopener">查看AI视频</a></p>
+                    <p>AI长漫 → AI漫剧</p>
+                `,
+                tags: ['纪录片', '摄影',  '策划','AI创作', '剪辑', '广东广播电视台']
+            },
+            'detail-social': {
+                number: '03',
+                title: '社交媒体与营销',
+                body: `
+                    <p><strong>小红书独立运营（2020年3月—5月）</strong></p>
+                    <p>独立运营生活vlog类小红书账号：</p>
+                    <p>· <strong>2个月</strong>内发布<strong>27条</strong>笔记</p>
+                    <p>· 涨粉<strong>1000+</strong></p>
+                    <p>· 获赞总数<strong>5000+</strong></p>
+                    <p>后因个人学业规划停止更新。</p>
+                    <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0;">
+                    <p><strong>营销实践与反思：</strong>在实践中深入理解了内容定位、选题策划、封面设计、发布时间优化等社交媒体运营策略。通过数据分析持续优化内容方向，积累了从0到1的账号冷启动经验。</p>
+                    <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0;">
+                    <p><strong>拍立得服务</strong>——校园创意营销实践。</p>
+                    <p>· 用户调研、视觉营销、线下推广、行业研究</p>
+                `,
+                tags: ['小红书', '内容运营', '涨粉策略', 'Vlog', '社交媒体营销']
+            },
+            'detail-data': {
+                number: '04',
+                title: '数据新闻',
+                body: `
+                    <p><strong>数据新闻大赛广东省赛区优秀奖</strong></p>
+                    <p>使用<strong>Python</strong>进行数据分析与可视化，将数据转化为具有叙事力的新闻作品。</p>
+                    <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0;">
+                    <p><strong>Python数据可视化作品：</strong></p>
+                    <p>🔗 <a href="https://readymag.website/u1073825231/6020882/" target="_blank" rel="noopener">查看数据可视化作品</a></p>
+                    <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0;">
+                    <p>擅长用编程工具挖掘数据背后的故事，将复杂信息以直观、美观的可视化方式呈现给受众。</p>
+                `,
+                tags: ['Python', '数据可视化', '数据分析', '数据新闻', '比赛获奖']
+            },
+            'detail-writing': {
+                number: '05',
+                title: '文字作品',
+                body: `
+                    <p>文字是我最核心的表达工具。从人物特写到深度报道，从公众号推文到文学创作，我始终追求<strong>精准、有温度、有力量</strong>的文字表达。</p>
+                    <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0;">
+                    <p><strong>代表作品：</strong></p>
+                    <p>《足丈山野，手捻光阴》——83岁制香人杨寿英的人物特写，以细腻笔触记录传统手艺人的生命故事。从她绕二十公里山路寻找松树根，到在无人深山中独自过夜，再到四十年来香价仅从五角涨到三元——每一个细节都在诉说着坚守的力量。</p>
+                    <blockquote>她依然会往返于澜沧江两岸，手上的皱纹里总嵌着泥土，只因为「还有好多顾客要她的香」。</blockquote>
+                    <p>这篇作品展现了对平凡人物的深度关怀，以及将田野调查转化为动人叙事的能力。</p>
+                `,
+                tags: ['非虚构写作', '人物特写', '深度报道', '文学创作', '田野调查']
+            }
+        };
+
+        // Open detail
+        document.querySelectorAll('.portfolio-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const detailKey = item.dataset.detail;
+                const data = detailData[detailKey];
+                if (!data) return;
+
+                detailContent.innerHTML = `
+                    <div class="detail-number">${data.number}</div>
+                    <h2 class="detail-title">${data.title}</h2>
+                    <div class="detail-body">${data.body}</div>
+                    <div class="detail-tags">
+                        ${data.tags.map(t => `<span class="detail-tag">${t}</span>`).join('')}
+                    </div>
+                `;
+
+                detailOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                detailOverlay.querySelector('.detail-panel').scrollTop = 0;
+            });
+        });
+
+        // Close detail
+        function closeDetail() {
+            detailOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        detailClose.addEventListener('click', closeDetail);
+        detailOverlay.addEventListener('click', (e) => {
+            if (e.target === detailOverlay) closeDetail();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeDetail();
+        });
+
+        // ===== Intersection Observer for animations =====
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.portfolio-item, .about-section, .contact-section').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Hero elements are already visible with animate-in class
+        document.querySelectorAll('.animate-in').forEach(el => {
+            el.style.opacity = '1';
+        });
+
+        // ===== Initial state for animated elements =====
+        document.querySelectorAll('.animate-in').forEach(el => {
+            el.style.opacity = '0';
+            el.style.animationPlayState = 'running';
+        });
+
+        console.log('%c阳雨童 · 作品集 %cMade with care',
+            'font-size:1.2em;font-weight:bold;', 'font-size:0.8em;color:#888;');
+        console.log('%c中山大学传播学2027届', 'color:#888;');
+        console.log('%cFor the best experience please use desktop.', 'font-size:0.7em;color:#555;');
+    </script>
+</body>
+</html>
